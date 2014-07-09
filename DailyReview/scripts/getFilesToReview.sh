@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # includes
-source ./timeFuncs.sh
-source ./reviewTimeAccessors.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${DIR}/reviewTimeAccessors.sh
+source ${DIR}/timeFuncs.sh
 
 # ================================================================
 # Constants
@@ -12,8 +13,8 @@ source ./reviewTimeAccessors.sh
 IFS='
 '
 
-TO_REVIEW_FILE='filesToReview.txt'
-DIRS_TO_SEARCH_FILE='dirsToSearch.txt'
+TO_REVIEW_FILE="${DIR}/filesToReview.txt"
+DIRS_TO_SEARCH_FILE="${DIR}/dirsToSearch.txt"
 
 TYPES_TO_REVIEW[0]="presentation"
 TYPES_TO_REVIEW[1]="document"
@@ -38,7 +39,7 @@ function storeReviewItem() {
 	reviewTime=$(getReviewTime "$1")
 	currentTime=$(now)
 	if [[ "$reviewTime" < "$currentTime" ]]; then
-		echo "$1" >> $TO_REVIEW_FILE;
+		echo "$1" # >> "$TO_REVIEW_FILE"
 	fi
 }
 
@@ -47,7 +48,7 @@ function storeReviewItem() {
 # ================================================================
 
 # clear the files to review from previous runs
-(rm $TO_REVIEW_FILE) || true
+(rm "$TO_REVIEW_FILE") || true
 
 # get the directories to search
 dirsToSearch=( $(cat $DIRS_TO_SEARCH_FILE) )

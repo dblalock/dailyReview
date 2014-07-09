@@ -1,7 +1,8 @@
 #!/bin/bash
 
-source ./reviewTimeAccessors.sh
-source ./timeFuncs.sh
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source ${DIR}/reviewTimeAccessors.sh
+source ${DIR}/timeFuncs.sh
 
 # ================================================================
 # Functions

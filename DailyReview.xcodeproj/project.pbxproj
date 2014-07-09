@@ -37,6 +37,7 @@
 /* Begin PBXFileReference section */
 		727E0E86196CED7100C17D7D /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
 		727E0E87196CED7100C17D7D /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
+		727E0E8A196CFEAF00C17D7D /* DBSharedConsts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBSharedConsts.h; sourceTree = "<group>"; };
 		727F70091969B48500C25F9D /* DailyReview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyReview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		727F700C1969B48500C25F9D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		727F700F1969B48500C25F9D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -133,6 +134,7 @@
 				727F70211969B48500C25F9D /* MainMenu.xib */,
 				727E0E86196CED7100C17D7D /* DBUtils.h */,
 				727E0E87196CED7100C17D7D /* DBUtils.m */,
+				727E0E8A196CFEAF00C17D7D /* DBSharedConsts.h */,
 				727F70241969B48500C25F9D /* Images.xcassets */,
 				727F7045196A40A200C25F9D /* scripts */,
 				727F70131969B48500C25F9D /* Supporting Files */,

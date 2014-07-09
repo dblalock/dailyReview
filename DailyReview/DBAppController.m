@@ -78,13 +78,7 @@
 	//pop up an open dialog (only select folders)
 	//for each file selected
 	//	system("mv file saveDir")
-	NSString * kDIRS_TO_SEARCH_FILENAME = @"dirsToSearch";
-	NSString * kDIRS_TO_SEARCH_PATH = pathToOutputFile(kDIRS_TO_SEARCH_FILENAME);
-	NSArray * dirsToSearch = readLines(kDIRS_TO_SEARCH_PATH);
-	NSLog(@"contents of dirs to search:");
-	for (NSString * str in dirsToSearch) {
-		NSLog(@"%@", str);
-	}
+	getSearchDirs();
 }
 -(IBAction) trash:(id)sender {
 	//system("mv selectedfiles $HOME/.Trash)"
@@ -101,6 +95,7 @@
 	//for each selected file
 		//remove file from reviewTable
 		//set 1h from now as the file's reviewDate
+	getFilesToReview();
 }
 -(IBAction) reviewTomorrow:(id)sender {
 	//for each selected file

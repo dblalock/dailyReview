@@ -15,3 +15,7 @@ NSString* pathToOutputFile(NSString* fileName);
 NSArray* readLines(NSString* file);
 
 NSString* runCommand(NSString *cmd);
+NSString* runScriptWithArgs(NSString *commandToRun);
+
+NSArray * getSearchDirs();
+NSArray * getFilesToReview();
