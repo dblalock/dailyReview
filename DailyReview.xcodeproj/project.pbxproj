@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		727E0E88196CED7100C17D7D /* DBUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 727E0E87196CED7100C17D7D /* DBUtils.m */; };
 		727F700D1969B48500C25F9D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 727F700C1969B48500C25F9D /* Cocoa.framework */; };
 		727F70171969B48500C25F9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 727F70151969B48500C25F9D /* InfoPlist.strings */; };
 		727F70191969B48500C25F9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 727F70181969B48500C25F9D /* main.m */; };
@@ -18,6 +19,9 @@
 		727F702D1969B48500C25F9D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 727F700C1969B48500C25F9D /* Cocoa.framework */; };
 		727F70351969B48500C25F9D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 727F70331969B48500C25F9D /* InfoPlist.strings */; };
 		727F70371969B48500C25F9D /* DailyReviewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 727F70361969B48500C25F9D /* DailyReviewTests.m */; };
+		727F70421969CA3700C25F9D /* DBAppController.m in Sources */ = {isa = PBXBuildFile; fileRef = 727F70411969CA3700C25F9D /* DBAppController.m */; };
+		727F7046196A40A200C25F9D /* scripts in Resources */ = {isa = PBXBuildFile; fileRef = 727F7045196A40A200C25F9D /* scripts */; };
+		727F704E196A561E00C25F9D /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 727F704B196A561E00C25F9D /* LICENSE.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,6 +35,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		727E0E86196CED7100C17D7D /* DBUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBUtils.h; sourceTree = "<group>"; };
+		727E0E87196CED7100C17D7D /* DBUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBUtils.m; sourceTree = "<group>"; };
 		727F70091969B48500C25F9D /* DailyReview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DailyReview.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		727F700C1969B48500C25F9D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		727F700F1969B48500C25F9D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -50,6 +56,10 @@
 		727F70321969B48500C25F9D /* DailyReviewTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "DailyReviewTests-Info.plist"; sourceTree = "<group>"; };
 		727F70341969B48500C25F9D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		727F70361969B48500C25F9D /* DailyReviewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DailyReviewTests.m; sourceTree = "<group>"; };
+		727F70401969CA3700C25F9D /* DBAppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBAppController.h; sourceTree = "<group>"; };
+		727F70411969CA3700C25F9D /* DBAppController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBAppController.m; sourceTree = "<group>"; };
+		727F7045196A40A200C25F9D /* scripts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = scripts; sourceTree = "<group>"; };
+		727F704B196A561E00C25F9D /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,10 +125,16 @@
 		727F70121969B48500C25F9D /* DailyReview */ = {
 			isa = PBXGroup;
 			children = (
+				727F704B196A561E00C25F9D /* LICENSE.txt */,
 				727F701E1969B48500C25F9D /* DBAppDelegate.h */,
 				727F701F1969B48500C25F9D /* DBAppDelegate.m */,
+				727F70401969CA3700C25F9D /* DBAppController.h */,
+				727F70411969CA3700C25F9D /* DBAppController.m */,
 				727F70211969B48500C25F9D /* MainMenu.xib */,
+				727E0E86196CED7100C17D7D /* DBUtils.h */,
+				727E0E87196CED7100C17D7D /* DBUtils.m */,
 				727F70241969B48500C25F9D /* Images.xcassets */,
+				727F7045196A40A200C25F9D /* scripts */,
 				727F70131969B48500C25F9D /* Supporting Files */,
 			);
 			path = DailyReview;
@@ -230,10 +246,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				727F704E196A561E00C25F9D /* LICENSE.txt in Resources */,
 				727F70171969B48500C25F9D /* InfoPlist.strings in Resources */,
 				727F70251969B48500C25F9D /* Images.xcassets in Resources */,
 				727F701D1969B48500C25F9D /* Credits.rtf in Resources */,
 				727F70231969B48500C25F9D /* MainMenu.xib in Resources */,
+				727F7046196A40A200C25F9D /* scripts in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,7 +271,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				727F70201969B48500C25F9D /* DBAppDelegate.m in Sources */,
+				727F70421969CA3700C25F9D /* DBAppController.m in Sources */,
 				727F70191969B48500C25F9D /* main.m in Sources */,
+				727E0E88196CED7100C17D7D /* DBUtils.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -466,6 +486,7 @@
 				727F703C1969B48500C25F9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		727F703D1969B48500C25F9D /* Build configuration list for PBXNativeTarget "DailyReviewTests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +495,7 @@
 				727F703F1969B48500C25F9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
