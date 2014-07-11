@@ -11,11 +11,16 @@
 
 
 @interface DBAppController : NSWindowController <NSWindowDelegate,
-NSOpenSavePanelDelegate> {
+NSTableViewDataSource, NSTableViewDelegate> {
+	NSMutableArray *_dirsToSearch;
+	NSMutableArray *_filesToReview;
 }
 
+NSArray* getSelectedFiles();
+
 //@property(assign) IBOutlet NSWindow* window;
-@property(weak) IBOutlet NSTableView* reviewTable;
+@property(assign) IBOutlet NSTableView* searchTable;
+@property(assign) IBOutlet NSTableView* reviewTable;
 
 -(IBAction) addReviewDir:(id)sender;
 -(IBAction) removeReviewDir:(id)sender;

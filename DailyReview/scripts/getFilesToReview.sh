@@ -9,16 +9,13 @@ source ${DIR}/timeFuncs.sh
 # Constants
 # ================================================================
 
-# mdfind output separated by newlines, not whitespace
-IFS='
-'
-
 TO_REVIEW_FILE="${DIR}/filesToReview.txt"
 DIRS_TO_SEARCH_FILE="${DIR}/dirsToSearch.txt"
+EXTS_TO_REVIEW_FILE="${DIR}/extsToReview.txt"
 
-TYPES_TO_REVIEW[0]="presentation"
-TYPES_TO_REVIEW[1]="document"
-TYPES_TO_REVIEW[2]="pdf"
+# find/mdfind output separated by newlines, not whitespace
+IFS='
+'
 
 # ================================================================
 # Functions
@@ -27,9 +24,8 @@ TYPES_TO_REVIEW[2]="pdf"
 function getReviewTime() {
 	reviewTime=$(readReviewTime "$1")	# attr might not be present
 	if [ -z "$reviewTime" ]; then
-		reviewTime=$( now )
-		setReviewTime "$reviewTime "$1"
-		# xattr -w $XATTR_REVIEW_TIME "$reviewTime" "$1" "
+		reviewTime=$(now)
+		setReviewTime "$reviewTime" "$1"
 	fi
 	echo "$reviewTime"
 }
@@ -39,7 +35,7 @@ function storeReviewItem() {
 	reviewTime=$(getReviewTime "$1")
 	currentTime=$(now)
 	if [[ "$reviewTime" < "$currentTime" ]]; then
-		echo "$1" # >> "$TO_REVIEW_FILE"
+		echo "$1" >> $TO_REVIEW_FILE;
 	fi
 }
 
@@ -48,16 +44,19 @@ function storeReviewItem() {
 # ================================================================
 
 # clear the files to review from previous runs
-(rm "$TO_REVIEW_FILE") || true
+(rm $TO_REVIEW_FILE) || true
 
 # get the directories to search
 dirsToSearch=( $(cat $DIRS_TO_SEARCH_FILE) )
 
-# get all the files to review
-for dir in "${dirsToSearch[@]}"; do
-	for kind in "${TYPES_TO_REVIEW[@]}"; do
+# get file extensions to review
+EXTS_TO_REVIEW=( $(cat $EXTS_TO_REVIEW_FILE) )
 
-		files=( $(mdfind -onlyin "$dir" kind:"$kind") )	#wrapping parens init an array
+# get all the files to review; note that there may be duplicates
+for dir in "${dirsToSearch[@]}"; do
+	for ext in "${EXTS_TO_REVIEW[@]}"; do
+
+		files=( $(find -L "$dir" -type f \( -iname "*.${ext}" ! -iname ".*" \) ) )
 		for file in "${files[@]}"; do
 			storeReviewItem "$file"
 		done

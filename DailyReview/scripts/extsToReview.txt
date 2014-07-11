@@ -1,0 +1,13 @@
+pdf
+ppt
+pptx
+doc
+docx
+xls
+xlsx
+key
+pages
+numbers
+txt
+rtf
+webarchive
