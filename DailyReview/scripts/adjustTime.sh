@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# includes
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source ${DIR}/reviewTimeAccessors.sh
 source ${DIR}/timeFuncs.sh
@@ -12,7 +13,7 @@ function usage() {
 	echo "Usage: adjustedTime amount file"
 	echo "Echoes a string representation of the current time plus the specified amount"
 	echo "Options:"
-	echo "hour, day, 2days, week, month"
+	echo "hour, day, 2days, week, month, never"
 }
 
 # ================================================================
@@ -32,14 +33,22 @@ fi
 # print appropriate output
 if [[ "$1" = "hour" ]]; then
 	setReviewTime "$(nextHour)" "$2"
+
 elif [[ "$1" = "day" ]]; then
 	setReviewTime "$(nextDay)" "$2"
+
 elif [[ "$1" = "2days" ]]; then
 	setReviewTime "$(twoDays)" "$2"
+
 elif [[ "$1" = "week" ]]; then
 	setReviewTime "$(nextWeek)" "$2"
+
 elif [[ "$1" = "month" ]]; then
 	setReviewTime "$(nextMonth)" "$2"
+
+elif [[ "$1" = "never" ]]; then
+	setReviewTime "$(tenYears)" "$2"
+
 else
 	echo "ERROR: invalid argument given"
 	usage

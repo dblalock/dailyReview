@@ -11,11 +11,13 @@ source ${DIR}/timeFuncs.sh
 
 TO_REVIEW_FILE="${DIR}/filesToReview.txt"
 DIRS_TO_SEARCH_FILE="${DIR}/dirsToSearch.txt"
-EXTS_TO_REVIEW_FILE="${DIR}/extsToReview.txt"
 
-# find/mdfind output separated by newlines, not whitespace
-IFS='
-'
+TYPES_TO_REVIEW[0]="presentation"
+TYPES_TO_REVIEW[1]="document"
+TYPES_TO_REVIEW[2]="pdf"
+TYPES_TO_REVIEW[3]="web"
+
+# echo "actually calling this script"
 
 # ================================================================
 # Functions
@@ -26,6 +28,7 @@ function getReviewTime() {
 	if [ -z "$reviewTime" ]; then
 		reviewTime=$(now)
 		setReviewTime "$reviewTime" "$1"
+		# xattr -w $XATTR_REVIEW_TIME "$reviewTime" "$1" "
 	fi
 	echo "$reviewTime"
 }
@@ -35,7 +38,8 @@ function storeReviewItem() {
 	reviewTime=$(getReviewTime "$1")
 	currentTime=$(now)
 	if [[ "$reviewTime" < "$currentTime" ]]; then
-		echo "$1" >> $TO_REVIEW_FILE;
+		echo "$1" # >> $TO_REVIEW_FILE;
+		# echo "$1" >> $TO_REVIEW_FILE;
 	fi
 }
 
@@ -43,20 +47,28 @@ function storeReviewItem() {
 # Main
 # ================================================================
 
-# clear the files to review from previous runs
-(rm $TO_REVIEW_FILE) || true
-
 # get the directories to search
 dirsToSearch=( $(cat $DIRS_TO_SEARCH_FILE) )
 
-# get file extensions to review
-EXTS_TO_REVIEW=( $(cat $EXTS_TO_REVIEW_FILE) )
+# find/mdfind output separated by newlines, not whitespace
+IFS='
+'
+
+# echo dirsToSearch: $dirsToSearch
+# get symlinks in dirs to search, since mdfind ignores them
+allDirsToSearch=( "${dirsToSearch[@]}" )
+# for dir in in "${dirsToSearch[@]}"; do
+# 	# ignore files and directories containing *.*
+# 	symlinks=( $(find "$dir" -type l \( ! -iname "*.*" \) ) )
+# 	allDirsToSearch+=("${symlinks[@]}")
+# done
+# echo dirs with links: "${allDirsToSearch[@]}"
 
 # get all the files to review; note that there may be duplicates
-for dir in "${dirsToSearch[@]}"; do
-	for ext in "${EXTS_TO_REVIEW[@]}"; do
+for dir in "${allDirsToSearch[@]}"; do
+	for kind in "${TYPES_TO_REVIEW[@]}"; do
 
-		files=( $(find -L "$dir" -type f \( -iname "*.${ext}" ! -iname ".*" \) ) )
+		files=( $(mdfind -onlyin "$dir" kind:"$kind") )	#wrapping parens init an array
 		for file in "${files[@]}"; do
 			storeReviewItem "$file"
 		done
