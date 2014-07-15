@@ -10,6 +10,8 @@
 
 @interface DBAppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+- (IBAction)togglePreviewPanel:(id)previewPanel;
+
+//@property (assign) IBOutlet NSWindow *window;
 
 @end

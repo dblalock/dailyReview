@@ -8,4 +8,6 @@
 
 #include <Foundation/Foundation.h>
 
-NSString * kDIRS_TO_SEARCH_FILENAME = @"dirsToSearch";
+FOUNDATION_EXPORT NSString *const kDIRS_TO_SEARCH_FILENAME;
+FOUNDATION_EXPORT NSString *const kGET_REVIEW_FILES_SCRIPT;
+FOUNDATION_EXPORT NSString *const kADJUST_TIME_SCRIPT;

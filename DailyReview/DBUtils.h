@@ -10,10 +10,12 @@
 
 @interface DBUtils : NSObject
 
++(BOOL) quickLookFile:(NSString*)path;
 +(void) chooseSaveFile:(NSString*)defaultFilePath  pathCallback:(void(^)(NSString*)) callback;
 
 @end
 
+NSImage* iconImageForFile(NSString* path);
 
 NSString* pathToShellScript(NSString* scriptName);
 NSString* pathToOutputFile(NSString* fileName);
@@ -22,7 +24,8 @@ NSArray* readLines(NSString* file);
 BOOL writeStringArrayToFileAsLines(NSArray* ar, NSString* filePath);
 
 NSString* runCommand(NSString *cmd);
-NSString* runScriptWithArgs(NSString *commandToRun);
+NSString* runScript(NSString *commandToRun);
+NSString* runScriptWithArgs(NSString *commandToRun, NSArray* args);
 
 NSArray * getSearchDirs();
 NSArray * getFilesToReview();

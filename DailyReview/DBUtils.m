@@ -8,11 +8,56 @@
 
 #import "DBUtils.h"
 
+#import <QuickLook/QuickLook.h>
 #import "DBSharedConsts.h"
 
+#define ICON_SIZE 20.0
 
 // only need to wrap one method that takes in a block
 @implementation DBUtils
+
++(BOOL) quickLookFile:(NSString*)path {
+	NSURL *fileURL = [NSURL fileURLWithPath:path];
+    if (! path || !fileURL) {
+		NSLog(@"DBUtils: quicklookfile: invalid path %@", path);
+        return NO;
+    }
+    
+	
+	int width=600;
+	int height=800;
+    NSDictionary *dict = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO]
+                                                     forKey:(NSString *)kQLThumbnailOptionIconModeKey];
+    CGImageRef ref = QLThumbnailImageCreate(kCFAllocatorDefault,
+                                            (__bridge CFURLRef)fileURL,
+                                            CGSizeMake(width, height),
+                                            (__bridge CFDictionaryRef)dict);
+	return (ref != nil);
+}
+
+NSImage* iconImageForFile(NSString* filePath) {
+	filePath = [filePath stringByExpandingTildeInPath];
+	NSImage* iconImage = [[NSWorkspace sharedWorkspace] iconForFile:filePath];
+	[iconImage setSize:NSMakeSize(ICON_SIZE, ICON_SIZE)];
+	
+	// make the icon better (according to QuickLookDownloader example app)...?
+	NSDictionary *options = @{(id)kQLThumbnailOptionIconModeKey: (id)kCFBooleanTrue};
+	NSURL *url = [NSURL fileURLWithPath:filePath];
+	NSLog(@"creating img for path %@; url = %@", filePath, [url path]);
+	CGImageRef quickLookIcon = QLThumbnailImageCreate(NULL,
+													  (__bridge CFURLRef)url,
+													  CGSizeMake(ICON_SIZE, ICON_SIZE),
+													  (__bridge CFDictionaryRef)options);
+	if (quickLookIcon != NULL) {
+		NSLog(@"returning quicklook icon");
+		NSImage* betterIcon = [[NSImage alloc] initWithCGImage:quickLookIcon size:NSMakeSize(ICON_SIZE, ICON_SIZE)];
+		return betterIcon;
+//		[self performSelectorOnMainThread:@selector(setIconImage:) withObject:betterIcon waitUntilDone:NO];
+//		CFRelease(quickLookIcon);
+	}
+	NSLog(@"returning workspace icon");
+	return iconImage;
+}
 
 +(void) chooseSaveFile:(NSString*)defaultFilePath  pathCallback:(void(^)(NSString*)) callback {
 	NSSavePanel * savePanel = [NSSavePanel savePanel];
@@ -57,6 +102,10 @@ NSArray* linesOfStr(NSString* str) {
 NSArray * readLines(NSString* path) {
 	NSString *contents = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
 	NSArray *lines = linesOfStr(contents);
+	if (! lines) {
+		NSLog(@"lines nil");
+		return [[NSArray alloc] init];
+	}
 	return lines;
 }
 
@@ -66,42 +115,59 @@ BOOL writeStringArrayToFileAsLines(NSArray* ar, NSString* filePath) {
 }
 
 NSArray * getSearchDirs() {
-	NSArray * dirsToSearch = readLines(pathToOutputFile(kDIRS_TO_SEARCH_FILENAME));
-//	NSLog(@"dirs to search:");
-//	for (NSString * str in dirsToSearch) {
-//		NSLog(@"%@", str);
-//	}
+	NSArray * linesInFile = readLines(pathToOutputFile(kDIRS_TO_SEARCH_FILENAME));
+
+	NSFileManager* mgr = [NSFileManager defaultManager];
+	NSMutableArray* dirsToSearch = [[NSMutableArray alloc] init];
+
+	NSLog(@"dirs to search:");
+	for (NSString * str in linesInFile) {
+		NSLog(@"%@", str);
+		BOOL dirExists;
+		[mgr fileExistsAtPath:str isDirectory:&dirExists];
+		if (dirExists) {
+			[dirsToSearch addObject:str];
+		}
+	}
 	return dirsToSearch;
 }
 
 NSArray * getFilesToReview() {
-	// create the file containing which files to review
-	NSString* getFilesScript = pathToShellScript(@"getFilesToReview");
-	NSLog(@"get files script loc: %@", getFilesScript);
-	
-	// read its contents into an array of strings
-	NSString* filesStr = runScriptWithArgs([NSString stringWithFormat:@"%@", getFilesScript ]);
-	NSArray * filesToReview = linesOfStr(filesStr);
-	
 	//SELF: if this stops working, check to make sure script is writing
 	//to stdout, not file
-//	NSLog(@"files to review:");
-//	for (NSString * str in filesToReview) {
-//		NSLog(@"%@", str);
-//	}
+	
+	// read set of files to review
+	NSString* getFilesScript = pathToShellScript(kGET_REVIEW_FILES_SCRIPT);
+	NSString* filesStr = runScript([NSString stringWithFormat:@"%@", getFilesScript]);
+	NSArray * linesInFile = linesOfStr(filesStr);
+	
+	NSLog(@"filesStr: %@",filesStr);
+	
+	// verify that everything is a path that actually exists (which
+	// it should, but there *may* be whitespace in the files)
+	NSFileManager* mgr = [NSFileManager defaultManager];
+	NSMutableArray* filesToReview = [[NSMutableArray alloc] init];
+	NSLog(@"files to review:");
+	for (NSString * str in linesInFile) {
+		NSLog(@"%@", str);
+		if ([mgr fileExistsAtPath:str]) {
+			[filesToReview addObject:str];
+		}
+	}
 	return filesToReview;
 }
 
 NSString* runCommand(NSString *commandToRun) {
+	NSLog(@"running command: %@",commandToRun);
+	
     NSTask *task;
     task = [[NSTask alloc] init];
-    [task setLaunchPath: @"/bin/sh"];
+    [task setLaunchPath: @"/bin/bash"];
 	
     NSArray *arguments = [NSArray arrayWithObjects:
                           @"-c" ,
                           [NSString stringWithFormat:@"%@", commandToRun],
                           nil];
-    NSLog(@"running command: %@",commandToRun);
     [task setArguments: arguments];
 	
     NSPipe *pipe = [NSPipe pipe];
@@ -112,23 +178,26 @@ NSString* runCommand(NSString *commandToRun) {
     [task launch];
 	
     NSData *data = [file readDataToEndOfFile];
-	
-    NSString *output;
-    output = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
-    return output;
+    return [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 }
 
-NSString* runScriptWithArgs(NSString *commandToRun) {
+NSString* runScript(NSString *commandToRun) {
+	return runScriptWithArgs(commandToRun, nil);
+}
+
+NSString* runScriptWithArgs(NSString *scriptPath, NSArray* arguments) {
     NSTask *task;
     task = [[NSTask alloc] init];
     [task setLaunchPath: @"/bin/sh"];
 	
-    NSArray *arguments = [NSArray arrayWithObjects:
-                          [NSString stringWithFormat:@"%@", commandToRun],
-                          nil];
-    NSLog(@"running command: %@",commandToRun);
-    [task setArguments: arguments];
+	// set arguments to task; script path is 0th arg
+	NSMutableArray *args = [[NSMutableArray alloc] init];
+	[args addObject:scriptPath];
+	[args addObjectsFromArray:arguments];
+    [task setArguments: args];
 	
+    NSLog(@"running script: %@",scriptPath);
+
     NSPipe *pipe = [NSPipe pipe];
     [task setStandardOutput: pipe];
 	
@@ -136,10 +205,13 @@ NSString* runScriptWithArgs(NSString *commandToRun) {
 	
     [task launch];
 	
+    NSLog(@"waiting for task to exit...");
+	[task waitUntilExit];
+    NSLog(@"Task exited");
+	
     NSData *data = [file readDataToEndOfFile];
 	
-    NSString *output;
-    output = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
+    NSString *output = [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
     return output;
 }
 
@@ -162,19 +234,18 @@ NSString* chooseFolder() {
 
 void openFiles(NSArray* files) {
 	for (NSString* file in files) {
-		NSString* cmd = [NSString stringWithFormat:@"open '%@'", file];	//TODO remove echo
+		NSString* cmd = [NSString stringWithFormat:@"open '%@'", file];
 		runCommand(cmd);
 	}
 }
 
 BOOL moveFileToDir(NSString* file, NSString* dir) {
-	return moveFile(file, dir);
+	NSString* fileName = [file lastPathComponent];
+	NSString* destPath = [dir stringByAppendingPathComponent:fileName];
+	return moveFile(file, destPath);
 }
 
 BOOL moveFile(NSString* origPath, NSString* newPath) {
-	//ideally, use moveItemAtPath:toPath:error: of NSFileManager
 	if (! origPath || ! newPath) return NO;
-	NSString* cmd = [NSString stringWithFormat:@"mv %@ %@", origPath, newPath];	//TODO remove echo
-	runCommand(cmd);
-	return YES;
+	return [[NSFileManager defaultManager] moveItemAtPath:origPath toPath:newPath error:nil];
 }

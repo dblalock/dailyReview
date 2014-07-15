@@ -22,9 +22,12 @@ NSArray* getSelectedFiles();
 @property(assign) IBOutlet NSTableView* searchTable;
 @property(assign) IBOutlet NSTableView* reviewTable;
 
+-(IBAction) refresh:(id)sender;
+
 -(IBAction) addReviewDir:(id)sender;
 -(IBAction) removeReviewDir:(id)sender;
 
+-(IBAction) quickLook:(id)sender;
 -(IBAction) open:(id)sender;
 -(IBAction) move:(id)sender;
 -(IBAction) trash:(id)sender;
